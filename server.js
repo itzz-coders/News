@@ -1,89 +1,41 @@
 const express = require("express");
-const mysql = require("mysql2");
 const cors = require("cors");
 const axios = require("axios");
+require("dotenv").config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ MySQL connection
-const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "HRG_@#02072005",
-  database: "News"
+// ✅ Home route (test)
+app.get("/", (req, res) => {
+  res.send("✅ Server is running successfully!");
 });
 
-db.connect(err => {
-  if (err) {
-    console.error("MySQL Error:", err);
-    return;
-  }
-  console.log("✅ MySQL Connected");
-});
-
-// ✅ Fetch US News & Store in DB
-app.get("/fetch-news", async (req, res) => {
+// ✅ Fetch US News directly (NO DATABASE)
+app.get("/news", async (req, res) => {
   try {
-    const apiKey = "af5e1c06003c4654b571d2952c2b3702";
+    const apiKey = process.env.API_KEY;
 
     const response = await axios.get(
       `https://newsapi.org/v2/top-headlines?country=us&apiKey=${apiKey}`
     );
 
     if (!response.data.articles) {
-      return res.send("No articles found");
+      return res.status(404).json({ message: "No news found" });
     }
 
-    const articles = response.data.articles;
-
-    // ✅ Clear old data
-    db.query("DELETE FROM articles", (err) => {
-      if (err) console.error("Delete Error:", err);
-    });
-
-    // ✅ Insert new data
-    articles.forEach(article => {
-      db.query(
-        "INSERT INTO articles (title, description, url, urlToImage) VALUES (?, ?, ?, ?)",
-        [
-          article.title || "No title",
-          article.description || "No description",
-          article.url || "#",
-          article.urlToImage || ""
-        ],
-        (err) => {
-          if (err) console.error("Insert Error:", err);
-        }
-      );
-    });
-
-    res.send("✅ US News fetched and stored!");
+    res.json(response.data.articles);
 
   } catch (error) {
-    console.error("API Error:", error.message);
-    res.status(500).send("❌ Error fetching news");
+    console.error("❌ Error fetching news:", error.message);
+    res.status(500).json({ error: "Failed to fetch news" });
   }
 });
 
-// ✅ Send data to frontend
-app.get("/news", (req, res) => {
-  db.query("SELECT * FROM articles", (err, results) => {
-    if (err) {
-      console.error("DB Fetch Error:", err);
-      return res.status(500).send("Database error");
-    }
-    res.json(results);
-  });
-});
+// ✅ Start server (IMPORTANT for Render)
+const PORT = process.env.PORT || 5000;
 
-// ✅ Test route (IMPORTANT for debugging)
-app.get("/", (req, res) => {
-  res.send("Server is working ✅");
-});
-
-// ✅ Start server
-app.listen(5000, () => {
-  console.log("🚀 Server running on http://localhost:5000");
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
