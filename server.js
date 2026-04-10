@@ -17,6 +17,10 @@ app.get("/news", async (req, res) => {
   try {
     const apiKey = process.env.API_KEY;
 
+    if (!apiKey) {
+      return res.status(500).json({ error: "API_KEY is missing" });
+    }
+
     const response = await axios.get(
       `https://newsapi.org/v2/top-headlines?country=us&apiKey=${apiKey}`
     );
@@ -36,6 +40,6 @@ app.get("/news", async (req, res) => {
 // ✅ Start server (IMPORTANT for Render)
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {+
+app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
