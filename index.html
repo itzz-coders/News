@@ -1,15 +1,31 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Global News (US)</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+<nav>
+  <h2>NewsApp</h2>
 
-  <h1>🇺🇸 US News</h1>
+  <div class="ham-burger" onclick="toggleMenu()">☰</div>
 
-  <div id="news-container"></div>
+  <ul id="menu">
+    <li>Home</li>
+    <li>About</li>
+    <li>
+      Categories
+      <ul>
+        <li>Tech</li>
+        <li>Sports</li>
+      </ul>
+    </li>
+  </ul>
 
-  <script src="script.js"></script>
-</body>
-</html>
+  <input class="search-box" placeholder="Search..." />
+</nav>
+
+<div class="cards">
+  <div class="card">
+    <img src="https://via.placeholder.com/300" />
+    <div class="card-content">
+      <div class="card-title">News Title</div>
+      <div class="card-text">Short description...</div>
+    </div>
+  </div>
+</div>
+
+<footer>© 2026 News App</footer>
