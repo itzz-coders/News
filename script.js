@@ -4,7 +4,10 @@ async function loadNews() {
   container.innerHTML = "<p>Loading news...</p>";
 
   try {
-    const res = await fetch("http://localhost:5000/news");
+    const API_URL = "https://news-backend-2m1w.onrender.com/news";
+
+    // ✅ FIX: add fetch
+    const res = await fetch(API_URL);
     const data = await res.json();
 
     container.innerHTML = "";
@@ -29,7 +32,7 @@ async function loadNews() {
     });
 
   } catch (error) {
-    console.error(error);
+    console.error("Error:", error);
     container.innerHTML = "<p>Error loading news</p>";
   }
 }
